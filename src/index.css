@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@plugin "daisyui";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -129,6 +130,26 @@ body,
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+}
+
+button[data-slot="dialog-close"] {
+  opacity: 1; /* selalu terlihat */
+  color: white; /* icon putih */
+  background-color: rgba(55, 65, 81, 0.8); /* semi-transparent dark gray */
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px; /* bulat */
+  top: 1rem; /* jarak dari atas */
+  right: 1rem; /* jarak dari kanan */
+  position: absolute; /* pastikan posisi */
+  z-index: 50; /* pastikan di atas */
+}
+
+button[data-slot="dialog-close"]:hover {
+  background-color: rgba(55, 65, 81, 1);
 }
 
 @layer base {

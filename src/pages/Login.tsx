@@ -1,10 +1,11 @@
 import { Input } from "../components/Input";
 import { Button } from "../components/Button";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { setUser } from "@/store/userSlice";
-import axios from "axios";
+import type { RootState } from "@/store/store";
+import { api } from "@/services/api";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -13,18 +14,26 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const user = useSelector((state: RootState) => state.user);
+
+  useEffect(() => {
+    if (user?.id) {
+      navigate("/home");
+    }
+  }, [user, navigate]);
+
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const Response = await axios.post(
-        "http://localhost:4000/api/v1/user/login",
+      const response = await api.post(
+        "/user/login",
         {
           email,
           password,
         },
         { withCredentials: true },
       );
-      dispatch(setUser(Response.data.data));
+      dispatch(setUser(response.data.data));
       navigate("/home");
     } catch (error) {
       console.error(error);

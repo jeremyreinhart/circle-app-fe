@@ -2,7 +2,7 @@ import { Input } from "../components/Input";
 import { Button } from "../components/Button";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import axios from "axios";
+import { api } from "@/services/api";
 
 const Register = () => {
   const [username, setUsername] = useState("");
@@ -15,7 +15,7 @@ const Register = () => {
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:4000/api/v1/user/register", {
+      await api.post("/user/register", {
         username,
         full_name: fullName,
         email,
