@@ -39,47 +39,58 @@ export const SuggestedFollow = ({
 
   useEffect(() => {
     fetchSuggestedUsers();
-    socket.on(
-      "follow-action",
-      (data: {
-        followerId: number;
-        followingId: number;
-        action: "follow" | "unfollow";
-      }) => {
-        // Hapus user dari suggested list kalau kita follow mereka
+
+    const handleFollowAction = (data: {
+      followerId: number;
+      followingId: number;
+      action: "follow" | "unfollow";
+    }) => {
+      if (data.action === "follow") {
+        // Hapus user dari suggested list saat di-follow
         setSuggestedUsers((prev) =>
           prev.filter((user) => user.id !== data.followingId),
         );
-      },
-    );
+      } else if (data.action === "unfollow") {
+        fetchSuggestedUsers();
+      }
+    };
+
+    socket.on("follow-action", handleFollowAction);
 
     return () => {
-      socket.off("follow-action");
+      socket.off("follow-action", handleFollowAction);
     };
   }, []);
 
   const handleFollow = async (userId: number) => {
     try {
+      // Optimistic update - hapus dari UI dulu untuk UX yang lebih baik
+      setSuggestedUsers((prev) => prev.filter((user) => user.id !== userId));
+
       await api.post(
         "/follows",
         { user_id: userId },
         { withCredentials: true },
       );
-      setSuggestedUsers((prev) => prev.filter((user) => user.id !== userId));
+
+      // Server akan emit socket event, semua komponen akan update
     } catch (error) {
       console.error("Error following user:", error);
+      // Rollback jika error - refetch data
+      fetchSuggestedUsers();
     }
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <p className="text-white">Loading...</p>;
 
-  if (!loading && suggestedUsers.length === 0)
+  if (!loading && suggestedUsers.length === 0) {
     return (
       <div className="bg-neutral-900 flex flex-col gap-10 w-100 p-5 h-40 mt-10">
         <h1 className="text-white font-semibold text-2xl">Suggested for you</h1>
-        <p className="text-white text-xl">No suggestions available</p>;
+        <p className="text-white text-xl">No suggestions available</p>
       </div>
     );
+  }
 
   return (
     <div className={className}>

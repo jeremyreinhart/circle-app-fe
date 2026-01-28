@@ -3,6 +3,7 @@ import { CardProfile } from "@/components/Profile/CardProfile";
 import { SuggestedFollow } from "@/components/SugesstedFollow";
 import { useLogout } from "@/hooks/userLogout";
 import { api } from "@/services/api";
+import { socket } from "@/socket";
 import { useEffect, useState } from "react";
 
 type FollowUser = {
@@ -47,35 +48,57 @@ export const Follows = () => {
     fetchFollows();
   }, [tab]);
 
+  useEffect(() => {
+    const handleFollowAction = () => {
+      // Refetch data untuk update realtime
+      fetchFollows();
+    };
+
+    socket.on("follow-action", handleFollowAction);
+
+    return () => {
+      socket.off("follow-action", handleFollowAction);
+    };
+  }, [tab]);
+
   const handleFollow = async (user: FollowUser) => {
     try {
       if (!user.is_following) {
         // FOLLOW
-        await api.post(
-          "/follows",
-          { user_id: user.id },
-          { withCredentials: true },
-        );
+        // Optimistic update
         setUsers((prev) =>
           prev.map((u) =>
             u.id === user.id ? { ...u, is_following: true } : u,
           ),
         );
+
+        await api.post(
+          "/follows",
+          { user_id: user.id },
+          { withCredentials: true },
+        );
+
+        // Server akan emit socket event
       } else {
         // UNFOLLOW
-        await api.delete("/follows", {
-          data: { user_id: user.id },
-          withCredentials: true,
-        });
-        // update UI: toggle tombol
+        // Optimistic update
         setUsers((prev) =>
           prev.map((u) =>
             u.id === user.id ? { ...u, is_following: false } : u,
           ),
         );
+
+        await api.delete("/follows", {
+          data: { user_id: user.id },
+          withCredentials: true,
+        });
+
+        // Server akan emit socket event
       }
     } catch (error) {
       console.error("Follow error:", error);
+      // Rollback on error
+      fetchFollows();
     }
   };
 
@@ -84,7 +107,7 @@ export const Follows = () => {
   return (
     <div className="bg-black min-h-screen flex justify-center pt-5 px-4">
       <LeftBar userLogout={logout} />
-      <div className="w-504  mr-30 text-white border-r border-l ml-70">
+      <div className="w-504 mr-30 text-white border-r border-l ml-70">
         <h1 className="text-3xl font-semibold ml-5">Follows</h1>
         <div className="flex border-b border-gray-700 mb-4">
           <button
@@ -101,7 +124,7 @@ export const Follows = () => {
             onClick={() => setTab("following")}
             className={`flex-1 py-2 ${
               tab === "following"
-                ? "border-b-2 border-green-500 "
+                ? "border-b-2 border-green-500"
                 : "text-gray-400"
             }`}
           >
@@ -150,7 +173,7 @@ export const Follows = () => {
           </div>
         )}
       </div>
-      <div className="flex flex-col ">
+      <div className="flex flex-col">
         <CardProfile className="w-100 bg-neutral-900 rounded p-5" />
         <SuggestedFollow className="mt-5 bg-neutral-900 rounded p-4" />
       </div>
