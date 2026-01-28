@@ -64,7 +64,6 @@ export const SuggestedFollow = ({
 
   const handleFollow = async (userId: number) => {
     try {
-      // Optimistic update - hapus dari UI dulu untuk UX yang lebih baik
       setSuggestedUsers((prev) => prev.filter((user) => user.id !== userId));
 
       await api.post(
@@ -72,8 +71,6 @@ export const SuggestedFollow = ({
         { user_id: userId },
         { withCredentials: true },
       );
-
-      // Server akan emit socket event, semua komponen akan update
     } catch (error) {
       console.error("Error following user:", error);
       // Rollback jika error - refetch data
