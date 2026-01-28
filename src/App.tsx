@@ -5,6 +5,8 @@ import { Home } from "./pages/Home";
 import PrivateRoute from "./lib/PrivateRoute";
 import { useAuth } from "./hooks/useAuth";
 import { Profile } from "./pages/Profile";
+import { Follows } from "./pages/Follows";
+import { Search } from "./pages/Search";
 
 function App() {
   const { isAuthDone } = useAuth();
@@ -35,6 +37,22 @@ function App() {
             element={
               <PrivateRoute>
                 <Profile />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/follows"
+            element={
+              <PrivateRoute>
+                <Follows />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/search"
+            element={
+              <PrivateRoute>
+                <Search />
               </PrivateRoute>
             }
           />

@@ -2,9 +2,9 @@ import { ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { Thread } from "../ThreadCardItem";
 import { ThreadBody } from "./ThreadBody";
-import { ThreadReplies } from "./ThreadReplies";
 import { api } from "@/services/api";
-import { socket } from "@/socket";
+import { socket } from "../../socket";
+import { ThreadReplies } from "./ThreadReplies";
 
 type Reply = {
   id: number;

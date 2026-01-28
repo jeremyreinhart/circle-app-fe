@@ -33,7 +33,6 @@ const initialState: LikeState = {
   likes: {},
 };
 
-// 🔥 toggle like (HTTP)
 export const toggleLike = createAsyncThunk<LikeHttpPayload, number>(
   "threadLike/toggleLike",
   async (threadId) => {

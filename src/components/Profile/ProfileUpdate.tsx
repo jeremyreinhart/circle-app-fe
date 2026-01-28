@@ -83,9 +83,11 @@ export const ProfileUpdate = ({ isOpen, onClose }: ProfileUpdateProps) => {
               <div className="relative group">
                 <img
                   src={
-                    previewImage ||
-                    `http://localhost:4000${user.photo_profile}` ||
-                    "https://www.shutterstock.com/image-vector/default-avatar-profile-icon-social-600nw-1906669723.jpg"
+                    previewImage
+                      ? previewImage
+                      : user.photo_profile
+                        ? `http://localhost:4000${user.photo_profile}`
+                        : "https://www.shutterstock.com/image-vector/default-avatar-profile-icon-social-600nw-1906669723.jpg"
                   }
                   className="w-20 h-20 rounded-full border-4 border-neutral-900 object-cover"
                   alt="Profile"
@@ -108,7 +110,6 @@ export const ProfileUpdate = ({ isOpen, onClose }: ProfileUpdateProps) => {
             </div>
           </div>
 
-          {/* Form Inputs */}
           <div className="grid gap-4 mt-8">
             <div className="grid gap-2">
               <label htmlFor="full_name" className="text-neutral-400">

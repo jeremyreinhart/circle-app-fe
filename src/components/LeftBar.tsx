@@ -18,7 +18,7 @@ export const LeftBar = ({ userLogout }: Props) => {
       </div>
       <div>
         <Link
-          to=""
+          to="/search"
           className=" text-decoration-none text-white text-xl flex gap-1"
         >
           <UserSearch /> Search
@@ -26,10 +26,10 @@ export const LeftBar = ({ userLogout }: Props) => {
       </div>
       <div>
         <Link
-          to=""
+          to="/follows"
           className=" text-decoration-none text-white text-xl flex gap-1"
         >
-          <Heart color="white" /> Follow
+          <Heart /> Follow
         </Link>
       </div>
       <div>

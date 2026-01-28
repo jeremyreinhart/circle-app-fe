@@ -21,24 +21,23 @@ export type Creator = {
 export type Thread = {
   id: number;
   content: string;
-  image: string | null; // ⬅ WAJIB, bukan optional
+  image: string | null;
   created_at: string;
-  creator: {
-    id: number;
-    username: string;
-    full_name: string;
-    photo_profile: string | null;
-  };
+  creator: Creator;
   likes: number;
   replies: number;
   liked: boolean;
 };
 
-export const ThreadCardItem = () => {
+type Props = {
+  threads: Thread[];
+  setThreads: React.Dispatch<React.SetStateAction<Thread[]>>;
+};
+
+export const ThreadCardItem = ({ threads, setThreads }: Props) => {
   const dispatch = useDispatch<AppDispatch>();
   const likeState = useSelector((state: RootState) => state.threadLike.likes);
 
-  const [threads, setThreads] = useState<Thread[]>([]);
   const [selectedPost, setSelectedPost] = useState<Thread | null>(null);
 
   useEffect(() => {
@@ -60,29 +59,25 @@ export const ThreadCardItem = () => {
 
     fetchThreads();
 
-    socket.on("like_update", (data) => {
-      dispatch(updateLikeRealtime(data));
-    });
-
-    socket.on("new-thread", (thread) => {
-      setThreads((prev) => [thread, ...prev]);
-    });
+    socket.on("like_update", (data) => dispatch(updateLikeRealtime(data)));
+    socket.on("new-thread", (thread) =>
+      setThreads((prev) => [thread, ...prev]),
+    );
 
     return () => {
       socket.off("like_update");
       socket.off("new-thread");
     };
-  }, [dispatch]);
+  }, [dispatch, setThreads]);
 
   const handleLike = (id: number) => dispatch(toggleLike(id));
   const handleSelect = (id: number) =>
     setSelectedPost(threads.find((t) => t.id === id) || null);
 
-  if (selectedPost) {
+  if (selectedPost)
     return (
       <DetailThread post={selectedPost} onClose={() => setSelectedPost(null)} />
     );
-  }
 
   return (
     <div className="flex flex-col gap-4 mt-6">

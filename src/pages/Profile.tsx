@@ -16,6 +16,7 @@ import type { AppDispatch, RootState } from "../store/store";
 import { type Thread } from "@/components/ThreadCardItem";
 import { socket } from "../socket";
 import { ThreadReplies } from "@/components/Threads/ThreadReplies";
+import { SuggestedFollow } from "@/components/SugesstedFollow";
 
 type ThreadApiResponse = {
   id: number;
@@ -38,7 +39,6 @@ export const Profile = () => {
   const dispatch = useDispatch<AppDispatch>();
   const logout = useLogout();
 
-  // Mengambil state user terbaru dari Redux
   const user = useSelector((state: { user: UserState }) => state.user);
   const likeState = useSelector((state: RootState) => state.threadLike.likes);
 
@@ -94,6 +94,22 @@ export const Profile = () => {
     };
   }, [dispatch]);
 
+  useEffect(() => {
+    const handleReplyNew = ({ thread_id }: { thread_id: number }) => {
+      setThreadsUser((prev) =>
+        prev.map((t) =>
+          t.id === thread_id ? { ...t, replies: (t.replies ?? 0) + 1 } : t,
+        ),
+      );
+    };
+
+    socket.on("reply:new", handleReplyNew);
+
+    return () => {
+      socket.off("reply:new", handleReplyNew);
+    };
+  }, []);
+
   const handleSelect = (threadId: number) => {
     setOpenRepliesThreadId((prev) => (prev === threadId ? null : threadId));
   };
@@ -109,7 +125,7 @@ export const Profile = () => {
       <LeftBar userLogout={logout} />
 
       <div className="flex-1 border-x border-neutral-800 max-w-4xl ml-64">
-        <CardProfile />
+        <CardProfile className="" />
 
         <div className="flex border-b border-neutral-800 mt-6">
           <button
@@ -188,6 +204,13 @@ export const Profile = () => {
             </div>
           )}
         </div>
+      </div>
+      <div className="flex flex-col gap-10 w-60 mr-50 ">
+        <CardProfile
+          className="w-100 bg-neutral-900 rounded p-4"
+          my={"My Profile"}
+        />
+        <SuggestedFollow />
       </div>
     </div>
   );

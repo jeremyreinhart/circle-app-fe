@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import axios from "axios";
+
 import { setUser, clearUser } from "@/store/userSlice";
+import { api } from "@/services/api";
 
 export const useAuth = () => {
   const [isAuthDone, setIsAuthDone] = useState(false);
@@ -10,7 +11,7 @@ export const useAuth = () => {
   useEffect(() => {
     const fetchUserLogin = async () => {
       try {
-        const response = await axios.get("http://localhost:4000/api/v1/me", {
+        const response = await api.get("/me", {
           withCredentials: true,
         });
         dispatch(setUser(response.data.data));

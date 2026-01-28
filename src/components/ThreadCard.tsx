@@ -1,10 +1,10 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { Button } from "./Button";
 import { useSelector } from "react-redux";
 import { type RootState } from "../store/store";
-import { ThreadCardItem } from "./ThreadCardItem";
 import { api } from "@/services/api";
+import { ThreadCardItem, type Thread } from "./ThreadCardItem";
+import { socket } from "@/socket";
 
 export const ThreadCard = () => {
   const [content, setContent] = useState("");
@@ -13,9 +13,44 @@ export const ThreadCard = () => {
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [flashMessage, setFlashMessage] = useState<string | null>(null);
+  const [threads, setThreads] = useState<Thread[]>([]);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const user = useSelector((state: RootState) => state.user);
+
+  // Fetch initial threads
+  useEffect(() => {
+    const fetchThreads = async () => {
+      try {
+        const res = await api.get("/thread", { withCredentials: true });
+        setThreads(res.data.data ?? []);
+      } catch (err) {
+        console.error("Failed to fetch threads:", err);
+      }
+    };
+    fetchThreads();
+  }, []);
+
+  useEffect(() => {
+    const handleNewReplyCount = (data: {
+      threadId: number;
+      increment: number;
+    }) => {
+      setThreads((prev) =>
+        prev.map((t) =>
+          t.id === data.threadId
+            ? { ...t, replies: t.replies + data.increment }
+            : t,
+        ),
+      );
+    };
+
+    socket.on("reply:count", handleNewReplyCount);
+
+    return () => {
+      socket.off("reply:count", handleNewReplyCount);
+    };
+  }, []);
 
   // Handle image preview
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,12 +63,9 @@ export const ThreadCard = () => {
   // Handle post thread
   const handlePost = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!user) return alert("User belum login");
-    if (!content.trim() && !image) {
-      alert("Isi content atau pilih image minimal satu!");
-      return;
-    }
+    if (!content.trim() && !image)
+      return alert("Isi content atau pilih image!");
 
     const formData = new FormData();
     if (content.trim()) formData.append("content", content);
@@ -42,6 +74,7 @@ export const ThreadCard = () => {
 
     try {
       setLoading(true);
+
       await api.post("/thread", formData, {
         withCredentials: true,
       });
@@ -53,7 +86,7 @@ export const ThreadCard = () => {
       setFlashMessage("Thread berhasil diposting!");
       setTimeout(() => setFlashMessage(null), 2000);
     } catch (error) {
-      console.error("Gagal post thread:", error);
+      console.error(error);
       alert("Gagal memposting thread");
     } finally {
       setLoading(false);
@@ -61,20 +94,18 @@ export const ThreadCard = () => {
   };
 
   return (
-    <section className="pt-6 border-l border-r max-w-4xl mx-auto w-full ml-70">
-      {/* Flash message */}
+    <section className="pt-6 border-l border-r max-w-3xl mx-auto w-full ml-75">
       {flashMessage && (
-        <div className="ml-50 w-100 bg-gradient-to-r from-green-500 to-teal-500 text-white font-semibold px-6 py-3 shadow-lg z-50 flex items-center gap-3 animate-slide-in">
+        <div className="ml-50 w-100 bg-green-500 text-white px-6 py-3 rounded shadow-lg animate-slide-in">
           {flashMessage}
         </div>
       )}
 
       <h1 className="text-white font-bold text-2xl mb-4 ml-4">Home</h1>
 
-      {/* Form post thread */}
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
-          <div className="flex gap-4 items-center bg-black p-3 rounded-2xl cursor-pointer  transition">
+          <div className="flex gap-4 items-center bg-black p-3 rounded-2xl cursor-pointer">
             <img
               src={
                 user.photo_profile
@@ -87,24 +118,10 @@ export const ThreadCard = () => {
             <input
               type="text"
               placeholder="What's happening?"
-              className="flex-1 bg-transparent text-white font-semibold text-lg outline-none placeholder-gray-400"
+              className="flex-1 bg-transparent text-white outline-none placeholder-gray-400"
               value={content}
               onChange={(e) => setContent(e.target.value)}
               onFocus={() => setIsOpen(true)}
-            />
-            <label className="cursor-pointer">
-              <input
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handleImageChange}
-              />
-              <i className="bi bi-image text-2xl text-gray-400 hover:text-white transition"></i>
-            </label>
-            <Button
-              typebut="submit"
-              clasName="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-full"
-              text="Post"
             />
           </div>
         </DialogTrigger>
@@ -173,7 +190,7 @@ export const ThreadCard = () => {
         </DialogContent>
       </Dialog>
 
-      <ThreadCardItem />
+      <ThreadCardItem threads={threads} setThreads={setThreads} />
     </section>
   );
 };
