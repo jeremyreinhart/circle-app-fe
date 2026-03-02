@@ -15,7 +15,7 @@ type Props = {
 };
 
 export const SuggestedFollow = ({
-  className = "bg-neutral-900 flex flex-col w-100 p-5 gap-5",
+  className = "bg-neutral-900 flex flex-col w-full p-5 gap-5 rounded-xl",
 }: Props) => {
   const [suggestedUsers, setSuggestedUsers] = useState<SuggestedUser[]>([]);
   const [loading, setLoading] = useState(false);

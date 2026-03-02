@@ -27,26 +27,30 @@ const Register = () => {
       console.error(error);
     }
   };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-black">
-      <div className="w-full max-w-md">
-        <div className="text-start mb-4">
-          <h1 className="text-4xl text-green-700 font-bold">circle</h1>
-          <h3 className="text-white font-semibold text-2xl mt-2">
+    <div className="flex min-h-screen items-center justify-center bg-black px-4 sm:px-6">
+      <div className="w-full max-w-md  p-6 sm:p-8 rounded-2xl shadow-lg">
+        <div className="mb-6">
+          <h1 className="text-3xl sm:text-4xl text-green-600 font-bold">
+            circle
+          </h1>
+          <h3 className="text-white font-semibold text-xl sm:text-2xl mt-2">
             Create account Circle
           </h3>
         </div>
+
         <form onSubmit={handleRegister}>
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-4">
             <Input
               type="text"
-              text=" username *"
+              text=" Username *"
               value={username}
               change={(e) => setUsername(e.target.value)}
             />
             <Input
               type="text"
-              text=" FullName *"
+              text=" Full Name *"
               value={fullName}
               change={(e) => setFullName(e.target.value)}
             />
@@ -62,16 +66,18 @@ const Register = () => {
               value={password}
               change={(e) => setPassword(e.target.value)}
             />
+
             <Button
-              clasName="bg-green-800 text-white text-center h-12 w-113 rounded-3xl cursor-pointer hover:bg-green-700 transition duration-200"
+              clasName="bg-green-700 text-white h-12 w-full rounded-3xl cursor-pointer hover:bg-green-600 transition duration-200"
               typebut="submit"
               text="Create"
             />
           </div>
         </form>
-        <div className="flex mt-2">
-          <p className="text-white">Already have account? </p>
-          <Link to="/login" className="text-green-600">
+
+        <div className="flex flex-wrap gap-1 mt-4 text-sm">
+          <p className="text-white">Already have account?</p>
+          <Link to="/login" className="text-green-500 hover:underline">
             Login
           </Link>
         </div>

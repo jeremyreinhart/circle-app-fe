@@ -10,7 +10,7 @@ type Props = { className?: string; my?: string };
 type FollowCounts = { followers: number; following: number };
 
 export const CardProfile = ({
-  className = "w-full bg-neutral-800",
+  className = "w-full bg-neutral-900 rounded-xl p-4",
   my,
 }: Props) => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -65,7 +65,7 @@ export const CardProfile = ({
   return (
     <div className={className}>
       <p className="text-white font-semibold text-2xl mb-3">{my}</p>
-      <div className="relative h-30 bg-gradient-to-r from-green-200 via-yellow-200 to-yellow-400 rounded-xl mx-2">
+      <div className="relative h-30 bg-linear-to-r from-green-200 via-yellow-200 to-yellow-400 rounded-xl mx-2">
         <img
           src={
             user.photo_profile

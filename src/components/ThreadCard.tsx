@@ -22,7 +22,7 @@ export const ThreadCard = () => {
   useEffect(() => {
     const fetchThreads = async () => {
       try {
-        const res = await api.get("/thread", { withCredentials: true });
+        const res = await api.get("/threads", { withCredentials: true });
         setThreads(res.data.data ?? []);
       } catch (err) {
         console.error("Failed to fetch threads:", err);
@@ -94,9 +94,9 @@ export const ThreadCard = () => {
   };
 
   return (
-    <section className="pt-6 border-l border-r max-w-3xl mx-auto w-full ml-75">
+    <section className="pt-6 max-w-2xl mx-auto w-full px-4">
       {flashMessage && (
-        <div className="ml-50 w-100 bg-green-500 text-white px-6 py-3 rounded shadow-lg animate-slide-in">
+        <div className="mx-auto mb-4 max-w-md bg-green-600 text-white px-6 py-3 rounded shadow">
           {flashMessage}
         </div>
       )}

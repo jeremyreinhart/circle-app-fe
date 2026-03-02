@@ -70,7 +70,7 @@ export const ProfileUpdate = ({ isOpen, onClose }: ProfileUpdateProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px] bg-neutral-900 border-neutral-800 text-white">
+      <DialogContent className="sm:max-w-106.25 bg-neutral-900 border-neutral-800 text-white">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold text-white">
             Edit profile
@@ -78,7 +78,7 @@ export const ProfileUpdate = ({ isOpen, onClose }: ProfileUpdateProps) => {
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="relative h-24 bg-gradient-to-r from-green-200 via-yellow-200 to-yellow-400 rounded-t-lg">
+          <div className="relative h-24 bg-linear-to-r from-green-200 via-yellow-200 to-yellow-400 rounded-t-lg">
             <div className="absolute -bottom-8 left-4">
               <div className="relative group">
                 <img

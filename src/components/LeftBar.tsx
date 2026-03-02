@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowLeftFromLine } from "lucide-react";
+import { ArrowLeftFromLine, House, User } from "lucide-react";
 import { Button } from "@/components/Button";
 import { Heart, UserSearch } from "lucide-react";
 
@@ -9,48 +9,49 @@ interface Props {
 
 export const LeftBar = ({ userLogout }: Props) => {
   return (
-    <div className="pt-4 flex flex-col gap-5 ml-5 min-h-screen w-65 fixed top-0 left-0">
-      <h1 className="text-6xl text-green-500 font-bold">circle</h1>
-      <div>
-        <Link to="/home" className=" text-decoration-none text-white text-xl">
-          <i className="bi bi-house-door-fill text-xl"></i> Home
-        </Link>
-      </div>
-      <div>
-        <Link
-          to="/search"
-          className=" text-decoration-none text-white text-xl flex gap-1"
-        >
-          <UserSearch /> Search
-        </Link>
-      </div>
-      <div>
-        <Link
-          to="/follows"
-          className=" text-decoration-none text-white text-xl flex gap-1"
-        >
-          <Heart /> Follow
-        </Link>
-      </div>
-      <div>
-        <Link
-          to="/profile"
-          className=" text-decoration-none text-white text-xl"
-        >
-          <i className="bi bi-person-circle text-xl"></i> Profile
-        </Link>
-      </div>
+    <div className="sticky top-0 h-dvh overflow-y-auto pt-6 px-6 flex flex-col gap-6">
+      <h1 className="text-4xl lg:text-5xl text-green-500 font-bold">circle</h1>
+
+      <Link
+        to="/home"
+        className="text-white text-lg hover:text-green-500 transition flex gap-2"
+      >
+        <House /> Home
+      </Link>
+
+      <Link
+        to="/search"
+        className="text-white text-lg flex gap-2 hover:text-green-500 transition"
+      >
+        <UserSearch /> Search
+      </Link>
+
+      <Link
+        to="/follows"
+        className="text-white text-lg flex gap-2 hover:text-green-500 transition"
+      >
+        <Heart /> Follow
+      </Link>
+
+      <Link
+        to="/profile"
+        className="text-white text-lg hover:text-green-500 transition flex gap-2"
+      >
+        <User /> Profile
+      </Link>
+
       <Button
-        clasName="bg-green-800 text-white text-center h-12 w-55 rounded-3xl cursor-pointer hover:bg-green-700 transition duration-200"
+        clasName="bg-green-700 text-white h-12 w-full rounded-full hover:bg-green-600 transition"
         typebut="submit"
         text="Create Post"
       />
+
       <button
         onClick={userLogout}
-        className="text-white cursor-pointer w-25 hover:bg-neutral-800 flex rounded-xl mt-90"
+        className="text-white flex items-center gap-2 mt-auto hover:bg-neutral-800 p-2 rounded-lg transition"
       >
         <ArrowLeftFromLine />
-        <span>Logout</span>
+        Logout
       </button>
     </div>
   );

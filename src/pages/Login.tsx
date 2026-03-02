@@ -16,6 +16,7 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.user);
+
   useEffect(() => {
     if (user && user.id) {
       navigate("/home");
@@ -38,10 +39,7 @@ const Login = () => {
         { withCredentials: true },
       );
 
-      // Simpan user ke Redux
       dispatch(setUser(response.data.data));
-
-      // Redirect ke home
       navigate("/home");
     } catch (err: unknown) {
       if (err instanceof AxiosError) {
@@ -57,45 +55,51 @@ const Login = () => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-black">
-      <div className="w-full max-w-md p-5">
-        <div className="text-start mb-6">
-          <h1 className="text-4xl text-green-700 font-bold">circle</h1>
-          <h3 className="text-white font-bold text-3xl mt-2">
+    <div className="flex min-h-screen items-center justify-center bg-black px-4 sm:px-6">
+      <div className="w-full max-w-md p-6 sm:p-8 rounded-2xl shadow-lg">
+        <div className="mb-6">
+          <h1 className="text-3xl sm:text-4xl text-green-600 font-bold">
+            circle
+          </h1>
+          <h3 className="text-white font-bold text-2xl sm:text-3xl mt-2">
             Login to Circle
           </h3>
         </div>
 
         <form onSubmit={handleLogin} className="flex flex-col gap-4">
-          {error && <p className="text-red-500 text-sm">{error}</p>}
+          {error && (
+            <p className="text-red-500 text-sm bg-red-500/10 p-2 rounded-lg">
+              {error}
+            </p>
+          )}
 
           <Input
             value={email}
             change={(e) => setEmail(e.target.value)}
             type="email"
-            text="Email*"
+            text=" Email *"
           />
           <Input
             value={password}
             change={(e) => setPassword(e.target.value)}
             type="password"
-            text="Password*"
+            text=" Password *"
           />
 
-          <Link to="#" className="text-white text-end text-sm">
+          <Link to="#" className="text-white text-end text-sm hover:underline">
             Forgot Password?
           </Link>
 
           <Button
-            clasName="bg-green-800 text-white text-center h-12 w-full rounded-3xl cursor-pointer hover:bg-green-700 transition duration-200"
+            clasName="bg-green-700 text-white h-12 w-full rounded-3xl cursor-pointer hover:bg-green-600 transition duration-200"
             typebut="submit"
             text="Login"
           />
         </form>
 
-        <div className="flex mt-4 gap-1">
+        <div className="flex flex-wrap gap-1 mt-6 text-sm">
           <p className="text-white">Don't have an account yet?</p>
-          <Link to="/register" className="text-green-600">
+          <Link to="/register" className="text-green-500 hover:underline">
             Create account
           </Link>
         </div>
